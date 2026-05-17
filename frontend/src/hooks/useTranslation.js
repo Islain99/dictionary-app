@@ -1,11 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 
-// En prod Vercel : VITE_BACKEND_URL est vide, on utilise /api (meme domaine)
-// En dev local  : VITE_BACKEND_URL=http://localhost:5000
-const BASE = import.meta.env.VITE_BACKEND_URL || '';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 const DEBOUNCE_MS = 400;
 
+// Cache en mémoire : clé = "texte__langue"
 const translationCache = new Map();
 
 export const useTranslation = () => {
@@ -15,16 +14,19 @@ export const useTranslation = () => {
   const debounceRef = useRef(null);
 
   const translate = useCallback((text, targetLang) => {
+    // Ne pas traduire si pas de texte ou langue invalide
     if (!text?.trim() || !targetLang || targetLang === 'auto') {
       setTranslated(null);
       return;
     }
 
+    // Annule le debounce précédent
     clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(async () => {
       const cacheKey = `${text.trim()}__${targetLang}`;
 
+      // Retourne le cache si disponible
       if (translationCache.has(cacheKey)) {
         setTranslated(translationCache.get(cacheKey));
         return;
@@ -35,7 +37,7 @@ export const useTranslation = () => {
 
       try {
         const { data } = await axios.post(
-          `${BASE}/api/translate`,
+          `${BACKEND_URL}/api/language_translation/translate/`,
           { text: text.trim(), target: targetLang },
           { headers: { 'Content-Type': 'application/json' } }
         );
@@ -59,5 +61,11 @@ export const useTranslation = () => {
     setTranslationError(null);
   }, []);
 
-  return { translated, isTranslating, translationError, translate, clearTranslation };
+  return {
+    translated,
+    isTranslating,
+    translationError,
+    translate,
+    clearTranslation,
+  };
 };
