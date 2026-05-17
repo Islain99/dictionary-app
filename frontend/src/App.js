@@ -122,7 +122,7 @@ const App = () => {
     }
   };
 
-  const API_KEY = "GKOUb8f9fo055acAwUWsBA0QhhEsVZyn";
+  const TRANSLATION_API_KEY = import.meta.env.API_KEY;
 
   const detectLanguage = async (text) => {
     try {
@@ -130,7 +130,7 @@ const App = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "apikey": API_KEY 
+          "apikey": TRANSLATION_API_KEY 
         },
         redirect: 'follow',
         body: JSON.stringify({ text })
