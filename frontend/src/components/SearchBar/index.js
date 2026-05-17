@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const Form = styled(motion.form)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
@@ -46,12 +47,20 @@ const Button = styled(motion.button)`
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   margin-left: 1rem;
+  white-space: nowrap;
 
   &:hover {
     background-color: #9a8c98;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
+
+// ─── Composant ────────────────────────────────────────────────────────────────
 
 const SearchBar = ({ onSearch }) => {
   const [word, setWord] = useState('');
@@ -59,13 +68,17 @@ const SearchBar = ({ onSearch }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (word.trim()) {
-      console.log('Searching for:', word);
-      onSearch(word.trim());
-      // setWord('');
-    }
+    const trimmed = word.trim();
+
+    // Bug corrigé : on ne lance pas la recherche si le champ est vide
+    if (!trimmed) return;
+
+    onSearch(trimmed);
+
+    // Bug corrigé : le champ est vidé après la recherche
+    // (était commenté dans la version originale)
+    setWord('');
   };
-  
 
   return (
     <Form
@@ -81,11 +94,14 @@ const SearchBar = ({ onSearch }) => {
           onChange={(e) => setWord(e.target.value)}
           placeholder={t('searchPlaceholder')}
           aria-label={t('searchPlaceholder')}
+          autoComplete="off"
+          spellCheck="false"
         />
-        <Button 
-          type="submit" 
-          whileHover={{ scale: 1.05 }} 
+        <Button
+          type="submit"
+          whileHover={{ scale: 1.05 }}
           aria-label={t('searchButton')}
+          disabled={!word.trim()}
         >
           {t('searchButton')}
         </Button>

@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./App.css";
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import SearchBar from './components/SearchBar';
 import Definition from './components/Definition';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios'
+import SearchHistory from './components/SearchHistory';
+import { useTranslation as useI18n } from 'react-i18next';
 import './components/i18n.js';
+import { useDictionary } from './hooks/useDictionary';
+import { useTranslation } from './hooks/useTranslation';
+import { useHistory } from './hooks/useHistory';
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const Container = styled.div`
   display: flex;
@@ -25,51 +30,161 @@ const Title = styled(motion.h1)`
 
 const LanguageSelector = styled.select`
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  background-color: #4a4e69;
-  color: white;
-  border: none;
+  top: 1.5rem;
+  right: 1.5rem;
+
+  padding: 0.7rem 1rem;
+  padding-right: 2.5rem;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background: rgba(27, 25, 25, 0.42);
+  backdrop-filter: blur(10px);
+
+  color: #ffffff;
+
   cursor: pointer;
-  margin-left: 1rem;
+  outline: none;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+
+  appearance: none;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+
+  &:hover {
+    background-color: rgba(92, 96, 130, 0.95);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus {
+    border-color: #9a8d8c;
+    box-shadow:
+      0 0 0 3px rgba(154, 140, 152, 0.35),
+      0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  option {
+    background: #22223b;
+    color: white;
+  }
 `;
 
 const LanguageSelectorWrapper = styled.div`
-  position: relative;
-  top: 1rem;
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-direction: row;
-  right: 10rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin: 1rem;
+  gap: 1rem;
+
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+
+  background: rgba(27, 25, 25, 0.17);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  width: fit-content;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
 `;
 
-const Text = styled.label`
-  font-size: 30px;
-  color: #4a4e69;
-  font-weight: 300;
+const Text = styled.span`
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #383634e3;
+  letter-spacing: 0.3px;
 `;
 
 const DefLanguageSelector = styled.select`
-  position: relative;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  background-color: #4a4e69;
-  color: white;
-  border: none;
+  min-width: 240px;
+
+  padding: 0.8rem 1rem;
+  padding-right: 2.8rem;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  color: #383634e3;
+  background: linear-gradient(
+    135deg,
+    rgba(74, 78, 105, 0.95),
+    rgba(34, 34, 59, 0.95)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+
+  outline: none;
   cursor: pointer;
-  margin: 1rem;
+
+  appearance: none;
+
+  transition:
+    all 0.25s ease,
+    transform 0.2s ease;
+
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+
+  &:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(255, 255, 255, 0.2);
+
+    box-shadow:
+      0 10px 22px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus {
+    border-color: #9a8c98;
+
+    box-shadow:
+      0 0 0 4px rgba(154, 140, 152, 0.3),
+      0 10px 22px rgba(0, 0, 0, 0.2);
+  }
+
+  option {
+    background: #22223b;
+    color: #ffffff;
+    padding: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: unset;
+  }
 `;
 
 const ErrorMessage = styled.p`
@@ -84,143 +199,51 @@ const LoadingMessage = styled.p`
   margin-top: 1rem;
 `;
 
+// ─── Composant ────────────────────────────────────────────────────────────────
+
 const App = () => {
-  const [definitionData, setDefinitionData] = useState(null);
-  const [translatedDefinition, setTranslatedDefinition] = useState(null);
+  const { t, i18n } = useI18n();
   const [targetLang, setTargetLang] = useState('auto');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const { t, i18n } = useTranslation();
 
-  const fetchDefinition = async (word) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-      
-      if (response.status === 404) {
-        setError(`No definition found for "${word}".`);
-        setDefinitionData(null);
-        setTranslatedDefinition(null);
-        return;
-      }
-      
-      if (!response.ok) throw new Error('Failed to fetch the definition');
-      
-      const data = await response.json();
-      setDefinitionData(data[0] || null);
-      
-      // Handle translation if needed
-      await handleTranslation(data[0]?.meanings.map(meaning => meaning.definitions.map(def => def.definition).join(' ')).join(' '), targetLang);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des définitions", error);
-      setError('An error occurred while fetching the definition.');
-      setDefinitionData(null);
-      setTranslatedDefinition(null);
-    } finally {
-      setIsLoading(false);
+  // Hooks métier
+  const { data: definitionData, isLoading, error, fetchDefinition } = useDictionary();
+  const { translated, isTranslating, translationError, translate, clearTranslation } = useTranslation();
+  const { history, addEntry, removeEntry, clearHistory } = useHistory();
+
+  // Re-traduit quand les données ou la langue changent
+  useEffect(() => {
+    if (!definitionData) {
+      clearTranslation();
+      return;
     }
+    const text = definitionData.meanings
+      .flatMap((m) => m.definitions.map((d) => d.definition))
+      .join(' ');
+    translate(text, targetLang);
+  }, [definitionData, targetLang]);
+
+  // Lance une recherche et enregistre dans l'historique
+  const handleSearch = (word) => {
+    fetchDefinition(word);
+    addEntry(word);
   };
 
-  const TRANSLATION_API_KEY = import.meta.env.API_KEY;
-
-  const detectLanguage = async (text) => {
-    try {
-      const response = await fetch("https://api.apilayer.com/language_translation/identify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": TRANSLATION_API_KEY 
-        },
-        redirect: 'follow',
-        body: JSON.stringify({ text })
-      });
-      
-      if (!response.ok) throw new Error('Language detection failed');
-      
-      const data = await response.json();
-      const languagesArray = data.languages;
-  
-      if (languagesArray && languagesArray.length > 0) {
-        const firstDetectedLanguage = languagesArray[0].language;
-        return firstDetectedLanguage;
-      } else {
-        return null; // Return null if no language detected
-      }
-    } catch (error) {
-      console.error("Error detecting language:", error);
-      return null; // Return null if there's an error
-    }
-  };
-
-  const translateText = async (text, targetLang) => {
-    try {
-      const sourceLang = await detectLanguage(text);
-      if (!sourceLang) {
-        console.error("Source language detection failed");
-        return null; // Handle the case where language detection fails
-      }
-
-      console.log('Targeted language: ', targetLang, '\nText: ', text, '\nSource: ', sourceLang);
-  
-      const response = await axios.post('http://localhost:5000/api/language_translation/translate/', {
-        text: text,
-        source: sourceLang,
-        target: targetLang
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-  
-      if (response.status !== 200) {
-        if (response.status === 404) throw new Error('Translation endpoint not found');
-        throw new Error('Translation failed');
-      }
-  
-      const data = response.data;
-      return data.translated_text;
-    } catch (error) {
-      console.error("Error translating text:", error);
-      return null; // Handle errors and return null
-    }
-  };
-
-  const handleTranslation = async (text, targetLang) => {
-    if (!text) return;
-    try {
-      const translatedText = await translateText(text, targetLang);
-      setTranslatedDefinition(translatedText);
-    } catch (error) {
-      console.error('Erreur lors de la traduction', error);
-      setError('An error occurred while translating the text.');
-      setTranslatedDefinition(null);
-    }
-  };
-
-  const handleTranslationLanguageChange = (e) => {
-    const selectedLang = e.target.value;
-    setTargetLang(selectedLang);
-
-    if (definitionData) {
-      // Re-translate the existing word
-      const definitionsText = definitionData.meanings.map(meaning => meaning.definitions.map(def => def.definition).join(' ')).join(' ');
-      handleTranslation(definitionsText, selectedLang);
-    }
-  };
-
-  const handleUIChangeLanguage = (e) => {
-    i18n.changeLanguage(e.target.value);
+  // Sélectionne un mot depuis l'historique (remonte en tête)
+  const handleHistorySelect = (word) => {
+    fetchDefinition(word);
+    addEntry(word);
   };
 
   return (
     <Container>
-      <div>
-        <LanguageSelector onChange={handleUIChangeLanguage} value={i18n.language}>
-          <option value="fr">Français</option>
-          <option value="en">English</option>
-        </LanguageSelector>
-      </div>
+      <LanguageSelector
+        onChange={(e) => i18n.changeLanguage(e.target.value)}
+        value={i18n.language}
+      >
+        <option value="fr">🇫🇷 Français</option>
+        <option value="en">🇬🇧 English</option>
+      </LanguageSelector>
+
       <Title
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -229,28 +252,39 @@ const App = () => {
         {t('title')}
       </Title>
 
-      <SearchBar onSearch={fetchDefinition} />
+      <SearchBar onSearch={handleSearch} />
+
+      {/* Historique de recherche */}
+      <SearchHistory
+        history={history}
+        onSelect={handleHistorySelect}
+        onRemove={removeEntry}
+        onClear={clearHistory}
+      />
+
       <LanguageSelectorWrapper>
-        <Text>
-          {t('translateTo')}
-        </Text>
-        <DefLanguageSelector onChange={handleTranslationLanguageChange} value={targetLang}>
-          <option value="auto">Auto detect</option>
-          <option value="en">English</option>
-          <option value="fr">Français</option>
-          <option value="af">Afrikaans</option>
-          <option value="ar">Arabic</option>
-          <option value="zh-CN">Chinese (Simplified)</option>
-          <option value="zh-TW">Chinese (Traditional)</option>
-          <option value="nl">Dutch</option>
-          <option value="de">German</option>
-          <option value="el">Greek</option>
-          <option value="ht">Haitian Creole</option>
-          <option value="iw">Hebrew</option>
-          <option value="ig">Igbo</option>
-          <option value="it">Italian</option>
+        <Text>{t('translateTo')}</Text>
+        <DefLanguageSelector
+          onChange={(e) => setTargetLang(e.target.value)}
+          value={targetLang}
+        >
+          <option value="auto">— {t('selectLanguage')} —</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="af">🇿🇦 Afrikaans</option>
+          <option value="ar">🇸🇦 Arabic</option>
+          <option value="zh-CN">🇨🇳 Chinese (Simplified)</option>
+          <option value="zh-TW">🇹🇼 Chinese (Traditional)</option>
+          <option value="nl">🇳🇱 Dutch</option>
+          <option value="de">🇩🇪 German</option>
+          <option value="el">🇬🇷 Greek</option>
+          <option value="ht">🇭🇹 Haitian Creole</option>
+          <option value="iw">🇮🇱 Hebrew</option>
+          <option value="ig">🇳🇬 Igbo</option>
+          <option value="it">🇮🇹 Italian</option>
         </DefLanguageSelector>
       </LanguageSelectorWrapper>
+
       {isLoading ? (
         <LoadingMessage>{t('loading')}</LoadingMessage>
       ) : error ? (
@@ -264,8 +298,12 @@ const App = () => {
           <Definition
             data={{
               word: definitionData.word || '',
+              phonetic: definitionData.phonetic || '',
+              phonetics: definitionData.phonetics || [],
               meanings: definitionData.meanings || [],
-              translation: translatedDefinition || '',
+              translation: translated || '',
+              isTranslating,
+              translationError,
             }}
           />
         </motion.div>

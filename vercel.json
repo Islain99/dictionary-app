@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd api && npm install",
+  "functions": {
+    "api/translate.js": {
+      "maxDuration": 15,
+      "memory": 256
+    },
+    "api/detect.js": {
+      "maxDuration": 10,
+      "memory": 128
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/translate",
+      "dest": "/api/translate.js",
+      "methods": ["POST", "OPTIONS"],
+      "headers": {
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    {
+      "src": "/api/detect",
+      "dest": "/api/detect.js",
+      "methods": ["POST", "OPTIONS"],
+      "headers": {
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "headers": {
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      }
+    }
+  ]
+}

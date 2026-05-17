@@ -1,0 +1,12 @@
+{
+  "name": "dictionary-api",
+  "version": "1.0.0",
+  "description": "Fonctions serverless Vercel pour le dictionnaire",
+  "author": {
+    "name": "Islain Kouam",
+    "email": "kouampagop@gmail.com"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}
