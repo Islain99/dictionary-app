@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import "./App.css";
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import SearchBar from './components/SearchBar';
-import Definition from './components/Definition';
-import SearchHistory from './components/SearchHistory';
-import { useTranslation as useI18n } from 'react-i18next';
+import SearchBar from './components/SearchBar/index.js';
+import Definition from './components/Definition/index.js';
+import SearchHistory from './components/SearchHistory/index.js';
+import { useTranslation as useI18n } from '../node_modules/react-i18next/index.js';
 import './components/i18n.js';
-import { useDictionary } from './hooks/useDictionary';
-import { useTranslation } from './hooks/useTranslation';
-import { useHistory } from './hooks/useHistory';
+import { useDictionary } from './hooks/useDictionary.js';
+import { useTranslation } from './hooks/useTranslation.js';
+import { useHistory } from './hooks/useHistory.js';
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
