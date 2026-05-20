@@ -88,30 +88,30 @@ const LanguageSelector = styled.select`
   }
 `;
 
-const LanguageSelectorWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+// const LanguageSelectorWrapper = styled.div`
+//   display: flex;
+//   align-items: center;
+//   gap: 1rem;
 
-  padding: 0.8rem 1rem;
-  margin: 1rem 0;
+//   padding: 0.8rem 1rem;
+//   margin: 1rem 0;
 
-  background: rgba(27, 25, 25, 0.17);
-  backdrop-filter: blur(12px);
+//   background: rgba(27, 25, 25, 0.17);
+//   backdrop-filter: blur(12px);
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+//   border: 1px solid rgba(255, 255, 255, 0.08);
+//   border-radius: 18px;
 
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+//   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-  width: fit-content;
+//   width: fit-content;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-  }
-`;
+//   @media (max-width: 768px) {
+//     flex-direction: column;
+//     align-items: stretch;
+//     width: 100%;
+//   }
+// `;
 
 const Text = styled.span`
   font-size: 0.95rem;
@@ -120,72 +120,72 @@ const Text = styled.span`
   letter-spacing: 0.3px;
 `;
 
-const DefLanguageSelector = styled.select`
-  min-width: 240px;
+// const DefLanguageSelector = styled.select`
+//   min-width: 240px;
 
-  padding: 0.8rem 1rem;
-  padding-right: 2.8rem;
+//   padding: 0.8rem 1rem;
+//   padding-right: 2.8rem;
 
-  font-size: 0.95rem;
-  font-weight: 500;
+//   font-size: 0.95rem;
+//   font-weight: 500;
 
-  color: #383634e3;
-  background: linear-gradient(
-    135deg,
-    rgba(74, 78, 105, 0.95),
-    rgba(34, 34, 59, 0.95)
-  );
+//   color: #383634e3;
+//   background: linear-gradient(
+//     135deg,
+//     rgba(74, 78, 105, 0.95),
+//     rgba(34, 34, 59, 0.95)
+//   );
 
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+//   border: 1px solid rgba(255, 255, 255, 0.12);
+//   border-radius: 14px;
 
-  outline: none;
-  cursor: pointer;
+//   outline: none;
+//   cursor: pointer;
 
-  appearance: none;
+//   appearance: none;
 
-  transition:
-    all 0.25s ease,
-    transform 0.2s ease;
+//   transition:
+//     all 0.25s ease,
+//     transform 0.2s ease;
 
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+//   box-shadow:
+//     0 4px 14px rgba(0, 0, 0, 0.15),
+//     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+//   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
+//   background-repeat: no-repeat;
+//   background-position: right 1rem center;
 
-  &:hover {
-    transform: translateY(-2px);
+//   &:hover {
+//     transform: translateY(-2px);
 
-    border-color: rgba(255, 255, 255, 0.2);
+//     border-color: rgba(255, 255, 255, 0.2);
 
-    box-shadow:
-      0 10px 22px rgba(0, 0, 0, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
+//     box-shadow:
+//       0 10px 22px rgba(0, 0, 0, 0.22),
+//       inset 0 1px 0 rgba(255, 255, 255, 0.08);
+//   }
 
-  &:focus {
-    border-color: #9a8c98;
+//   &:focus {
+//     border-color: #9a8c98;
 
-    box-shadow:
-      0 0 0 4px rgba(154, 140, 152, 0.3),
-      0 10px 22px rgba(0, 0, 0, 0.2);
-  }
+//     box-shadow:
+//       0 0 0 4px rgba(154, 140, 152, 0.3),
+//       0 10px 22px rgba(0, 0, 0, 0.2);
+//   }
 
-  option {
-    background: #22223b;
-    color: #ffffff;
-    padding: 0.5rem;
-  }
+//   option {
+//     background: #22223b;
+//     color: #ffffff;
+//     padding: 0.5rem;
+//   }
 
-  @media (max-width: 768px) {
-    width: 100%;
-    min-width: unset;
-  }
-`;
+//   @media (max-width: 768px) {
+//     width: 100%;
+//     min-width: unset;
+//   }
+// `;
 
 const ErrorMessage = styled.p`
   color: red;
@@ -262,7 +262,7 @@ const App = () => {
         onClear={clearHistory}
       />
 
-      <LanguageSelectorWrapper>
+      {/* <LanguageSelectorWrapper>
         <Text>{t('translateTo')}</Text>
         <DefLanguageSelector
           onChange={(e) => setTargetLang(e.target.value)}
@@ -283,7 +283,7 @@ const App = () => {
           <option value="ig">🇳🇬 Igbo</option>
           <option value="it">🇮🇹 Italian</option>
         </DefLanguageSelector>
-      </LanguageSelectorWrapper>
+      </LanguageSelectorWrapper> */}
 
       {isLoading ? (
         <LoadingMessage>{t('loading')}</LoadingMessage>
