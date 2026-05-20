@@ -6,10 +6,10 @@ import SearchBar from './components/SearchBar';
 import Definition from './components/Definition';
 import SearchHistory from './components/SearchHistory';
 import { useTranslation as useI18n } from '../node_modules/react-i18next';
-import './components/i18n.js';
-import { useDictionary } from './hooks/useDictionary.js';
-import { useTranslation } from './hooks/useTranslation.js';
-import { useHistory } from './hooks/useHistory.js';
+import './components/i18n';
+import { useDictionary } from './hooks/useDictionary';
+import { useTranslation } from './hooks/useTranslation';
+import { useHistory } from './hooks/useHistory';
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
